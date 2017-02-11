@@ -2,18 +2,18 @@
 
 [![Build Status](https://img.shields.io/travis/ReSwift/ReSwift/master.svg?style=flat-square)](https://travis-ci.org/ReSwift/ReSwift) [![Code coverage status](https://img.shields.io/codecov/c/github/ReSwift/ReSwift.svg?style=flat-square)](http://codecov.io/github/ReSwift/ReSwift) [![CocoaPods Compatible](https://img.shields.io/cocoapods/v/ReSwift.svg?style=flat-square)](https://cocoapods.org/pods/ReSwift) [![Platform support](https://img.shields.io/badge/platform-ios%20%7C%20osx%20%7C%20tvos%20%7C%20watchos-lightgrey.svg?style=flat-square)](https://github.com/ReSwift/ReSwift/blob/master/LICENSE.md) [![License MIT](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://github.com/ReSwift/ReSwift/blob/master/LICENSE.md)
 
-**Supported Swift Version:**: Swift 3.0.1
-For Swift 2.2 Support use [Release 2.0.0](https://github.com/ReSwift/ReSwift/releases/tag/2.0.0) or earlier.
+**サポートしているSwiftバージョン:**: Swift 3.0.1
+Swift 2.2については[Release 2.0.0](https://github.com/ReSwift/ReSwift/releases/tag/2.0.0)かもしくはそれ以前のバージョンがサポートしています。
 
 # Introduction
 
-ReSwift is a [Redux](https://github.com/reactjs/redux)-like implementation of the unidirectional data flow architecture in Swift. ReSwift helps you to separate three important concerns of your app's components:
+ReSwiftは[Redux](https://github.com/reactjs/redux)ライクな単方向データフローアーキテクチャをSwiftで実装したものです。ReSwift はアプリを三つの原則に基いて要素に分割します:
 
-- **State**: in a ReSwift app the entire app state is explicitly stored in a data structure. This helps avoid complicated state management code, enables better debugging and has many, many more benefits...
-- **Views**: in a ReSwift app your views update when your state changes. Your views become simple visualizations of the current app state.
-- **State Changes**: in a ReSwift app you can only perform state changes through actions. Actions are small pieces of data that describe a state change. By drastically limiting the way state can be mutated, your app becomes easier to understand and it gets easier to work with many collaborators.
+- **State**: ReSwiftを使ったアプリではアプリの状態を明示的にデータ構造に保存します。これによってコードが複雑になることを避け、デバッグを容易にし、さらにより多くの恩恵を受けることが出来ます。
+- **Views**: ReSwiftをつかったアプリではViewはアプリの状態が変わった時に更新されます。つまりViewはアプリの状態をシンプルに表すものになります。
+- **State Changes**: ReSwiftを使ったアプリではその状態はActionを通じてしか変えることができません。Actionは状態の変化を記述した小さなデータの塊です。厳しく状態の変化を制限することによって、アプリはより理解しやすく複数で開発することも容易になります。
 
-The ReSwift library is tiny - allowing users to dive into the code, understand every single line and [hopefully contribute](#contributing).
+ReSwiftライブラリは小さいためユーザーがコードを読み、全てを理解することが可能です。[コントリビュート](#contributing)も歓迎しています。
 
 ReSwift is quickly growing beyond the core library, providing experimental extensions for routing and time traveling through past app states!
 
@@ -38,14 +38,14 @@ Check out our [public gitter chat!](https://gitter.im/ReSwift/public)
 
 # About ReSwift
 
-ReSwift relies on a few principles:
-- **The Store** stores your entire app state in the form of a single data structure. This state can only be modified by dispatching Actions to the store. Whenever the state in the store changes, the store will notify all observers.
-- **Actions** are a declarative way of describing a state change. Actions don't contain any code, they are consumed by the store and forwarded to reducers. Reducers will handle the actions by implementing a different state change for each action.
-- **Reducers** provide pure functions, that based on the current action and the current app state, create a new app state
+ReSwiftはいくつかの原則に基いています:
+- **Store** はアプリ全体の状態を一つのデータ構造の形で保存しています。この状態はStoreに対するActionの適用でしか変えることができません。Store内で状態の変化があれば必ず全てのObserver（下図ではView）へ通知します。
+- **Actions**は宣言的に状態の変化を記述したものです。Actionには処理は書かれず、Storeとこの次に述べるReducerによって利用されます。ReducerはそれぞれのActionに対して違う状態変化を実装することでActionを扱います。
+- **Reducers**は純粋な現在のActionとアプリの状態に基いて新しいアプリの状態をつくる関数を提供します。
 
 ![](Docs/img/reswift_concept.png)
 
-For a very simple app, that maintains a counter that can be increased and decreased, you can define the app state as following:
+とても単純な例として、足し引きのみできるカウンターを取ると、このアプリの状態は次のように定義できます:
 
 ```swift
 struct AppState: StateType {
@@ -53,14 +53,14 @@ struct AppState: StateType {
 }
 ```
 
-You would also define two actions, one for increasing and one for decreasing the counter. In the [Getting Started Guide](http://reswift.github.io/ReSwift/master/getting-started-guide.html) you can find out how to construct complex actions. For the simple actions in this example we can define empty structs that conform to action:
+カウンターの足すと引くの二つのActionも定義できます。もっと複雑なActionについては[チュートリアル](http://reswift.github.io/ReSwift/master/getting-started-guide.html)をみてください。この例での単純なActionは空のActionを継承したstructにより定義できます:
 
 ```swift
 struct CounterActionIncrease: Action {}
 struct CounterActionDecrease: Action {}
 ```
 
-Your reducer needs to respond to these different action types, that can be done by switching over the type of action:
+Reducerはこの二つの異なるActionに応える必要があり、これはActionの型で条件分岐することで実現できます:
 
 ```swift
 struct CounterReducer: Reducer {
@@ -82,7 +82,7 @@ struct CounterReducer: Reducer {
 
 }
 ```
-In order to have a predictable app state, it is important that the reducer is always free of side effects, it receives the current app state and an action and returns the new app state.
+アプリの状態が予想できるように、Reducerは副作用が無く現在のアプリの状態とActionを受け取ったら決まった新しいアプリの状態を返せることが重要です。
 
 To maintain our state and delegate the actions to the reducers, we need a store. Let's call it `mainStore` and define it as a global constant, for example in the app delegate file:
 
@@ -99,7 +99,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 ```
 
 
-Lastly, your view layer, in this case a view controller, needs to tie into this system by subscribing to store updates and emitting actions whenever the app state needs to be changed:
+最後にViewの部分、今回の場合ViewControllerではStoreの更新をsubscribe(監視)してアプリの状態が変わる時は必ずActionを送信する必要があります:
 
 ```swift
 class CounterViewController: UIViewController, StoreSubscriber {
@@ -133,27 +133,27 @@ class CounterViewController: UIViewController, StoreSubscriber {
 }
 ```
 
-The `newState` method will be called by the `Store` whenever a new app state is available, this is where we need to adjust our view to reflect the latest app state.
+`newState`関数は`Store`から新しいアプリの状態が利用可能になると必ず呼ばれるもので、ここに最新のアプリの状態をViewに反映する処理を書かなければいけません。
 
-Button taps result in dispatched actions that will be handled by the store and its reducers, resulting in a new app state.
+ボタンがタップされるとStoreとそのReducerで扱われるActionを送り、結果として新しいアプリの状態を得ます。
 
-This is a very basic example that only shows a subset of ReSwift's features, read the Getting Started Guide to see how you can build entire apps with this architecture. For a complete implementation of this example see the [CounterExample](https://github.com/ReSwift/CounterExample) project.
+これはとても基本的な例でReSwiftの一部の機能しか紹介できていません。チュートリアルを読んでどうやってアプリ全体にこのアーキテクチャを適用するのかを学んでください。この例の完全な実装例は[CounterExample](https://github.com/ReSwift/CounterExample)にあります。
 
 [You can also watch this talk on the motivation behind ReSwift](https://realm.io/news/benji-encz-unidirectional-data-flow-swift/).
 
 # Why ReSwift?
 
-Model-View-Controller (MVC) is not a holistic application architecture. Typical Cocoa apps defer a lot of complexity to controllers since MVC doesn't offer other solutions for state management, one of the most complex issues in app development.
+Model-View-Controller(MVC)モデルは総体的なアプリケーションアーキテクチャではありません。典型的なCocoaアプリはMVCが状態管理に他の解決法を要請しないがためにControllerがとても複雑になってしまい、これはアプリ開発においてもっとも複雑な問題となっています。
 
-Apps built upon MVC often end up with a lot of complexity around state management and propagation. We need to use callbacks, delegations, Key-Value-Observation and notifications to pass information around in our apps and to ensure that all the relevant views have the latest state.
+MVCでつくられたアプリは状態の管理や伝達周りの複雑さによって破綻してしまいます。アプリの中で情報を関連するViewに渡して状態を最新のものに保っておくためにはコールバックやデリゲーション、KVOや通知を使わなければなりません。
 
-This approach involves a lot of manual steps and is thus error prone and doesn't scale well in complex code bases.
+このやり方だと多くの手動の操作が必要で、結果エラーが出る傾向があり上手く調整できず複雑なコードになってしまいます。
 
-It also leads to code that is difficult to understand at a glance, since dependencies can be hidden deep inside of view controllers. Lastly, you mostly end up with inconsistent code, where each developer uses the state propagation procedure they personally prefer. You can circumvent this issue by style guides and code reviews but you cannot automatically verify the adherence to these guidelines.
+また依存関係がViewControllerの中に隠れてしまっているので一目でみて理解することが難しいコードになってしまいます。そして最終的にそれぞれの開発者がそれぞれ好きな状態遷移の処理を書いてしまって多くの場合一貫性の無いコードになってしまいます。この問題はスタイルガイドをつくりコードレビューすることで解決することはできますが、自動でこれらのガイドラインに従わせることはできません。
 
-ReSwift attempts to solve these problem by placing strong constraints on the way applications can be written. This reduces the room for programmer error and leads to applications that can be easily understood - by inspecting the application state data structure, the actions and the reducers.
+ReSwiftはこれらの問題をアプリケーションの書き方に強い制約を設けることで解決しようとしています。アプリケーションの状態をデータ構造、Action、そしてReducerで検査することでプログラマーの生むエラーの余地を減らしより簡単に理解できるアプリケーションになるようにしているのです。
 
-This architecture provides further benefits beyond improving your code base:
+この構造はコードを良くするだけでなくさらなる利点もあります:
 
 - Stores, Reducers, Actions and extensions such as ReSwift Router are entirely platform independent - you can easily use the same business logic and share it between apps for multiple platforms (iOS, tvOS, etc.)
 - Want to collaborate with a co-worker on fixing an app crash? Use [ReSwift Recorder](https://github.com/ReSwift/ReSwift-Recorder) to record the actions that lead up to the crash and send them the JSON file so that they can replay the actions and reproduce the issue right away.
@@ -223,7 +223,7 @@ This repository contains the core component for ReSwift, the following extension
 
 # Example Projects
 
-- [CounterExample](https://github.com/ReSwift/CounterExample): A very simple counter app implemented with ReSwift. 
+- [CounterExample](https://github.com/ReSwift/CounterExample): A very simple counter app implemented with ReSwift.
 - [CounterExample-Navigation-TimeTravel](https://github.com/ReSwift/CounterExample-Navigation-TimeTravel): This example builds on the simple CounterExample app, adding time travel with [ReSwiftRecorder](https://github.com/ReSwift/ReSwift-Recorder) and routing with [ReSwiftRouter](https://github.com/ReSwift/ReSwift-Router).
 - [GitHubBrowserExample](https://github.com/ReSwift/GitHubBrowserExample): A real world example, involving authentication, network requests and navigation. Still WIP but should be the best resource for starting to adapt `ReSwift` in your own app.
 - [Meet](https://github.com/Ben-G/Meet): A real world application being built with ReSwift - currently still very early on. It is not up to date with the latest version of ReSwift, but is the best project for demonstrating time travel.
@@ -250,4 +250,3 @@ If you have any questions, you can find the core team on twitter:
 - [@ctietze](https://twitter.com/ctietze)
 
 We also have a [public gitter chat!](https://gitter.im/ReSwift/public)
-
